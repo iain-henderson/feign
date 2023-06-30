@@ -115,6 +115,11 @@ public final class AsyncFeign<C> {
     }
 
     @Override
+    public AsyncBuilder<C> redirectionDecoder(Decoder redirectionDecoder) {
+      return super.redirectionDecoder(redirectionDecoder);
+    }
+
+    @Override
     public AsyncBuilder<C> doNotCloseAfterDecode() {
       return super.doNotCloseAfterDecode();
     }
@@ -195,6 +200,7 @@ public final class AsyncFeign<C> {
                   logger,
                   decoder,
                   errorDecoder,
+                  redirectionDecoder,
                   dismiss404,
                   closeAfterDecode, responseInterceptor),
               AsyncResponseHandler.class,

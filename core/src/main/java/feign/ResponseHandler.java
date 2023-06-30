@@ -34,6 +34,7 @@ public class ResponseHandler {
 
   private final Decoder decoder;
   private final ErrorDecoder errorDecoder;
+  private final Decoder redirectionDecoder;
   private final boolean dismiss404;
   private final boolean closeAfterDecode;
 
@@ -42,11 +43,18 @@ public class ResponseHandler {
   public ResponseHandler(Level logLevel, Logger logger, Decoder decoder,
       ErrorDecoder errorDecoder, boolean dismiss404, boolean closeAfterDecode,
       ResponseInterceptor responseInterceptor) {
+    this(logLevel, logger, decoder, errorDecoder, null, dismiss404, closeAfterDecode, responseInterceptor);
+  }
+
+  public ResponseHandler(Level logLevel, Logger logger, Decoder decoder,
+      ErrorDecoder errorDecoder, Decoder redirectionDecoder, boolean dismiss404, boolean closeAfterDecode,
+      ResponseInterceptor responseInterceptor) {
     super();
     this.logLevel = logLevel;
     this.logger = logger;
     this.decoder = decoder;
     this.errorDecoder = errorDecoder;
+    this.redirectionDecoder = redirectionDecoder;
     this.dismiss404 = dismiss404;
     this.closeAfterDecode = closeAfterDecode;
     this.responseInterceptor = responseInterceptor;
@@ -63,6 +71,12 @@ public class ResponseHandler {
         return disconnectResponseBodyIfNeeded(response);
       }
 
+      final boolean shouldDecodeRedirection = response.status() >= 300 && response.status() < 400 && redirectionDecoder != null;
+
+      if (shouldDecodeRedirection) {
+        return decode(redirectionDecoder, response, returnType);
+      }
+
       final boolean shouldDecodeResponseBody = (response.status() >= 200 && response.status() < 300)
           || (response.status() == 404 && dismiss404 && !isVoidType(returnType));
 
@@ -70,7 +84,7 @@ public class ResponseHandler {
         throw decodeError(configKey, response);
       }
 
-      return decode(response, returnType);
+      return decode(decoder, response, returnType);
     } catch (final IOException e) {
       if (logLevel != Level.NONE) {
         logger.logIOException(configKey, logLevel, e, elapsedTime);
@@ -112,7 +126,7 @@ public class ResponseHandler {
     }
   }
 
-  private Object decode(Response response, Type type) throws IOException {
+  private Object decode(Decoder decoder, Response response, Type type) throws IOException {
     if (isVoidType(type)) {
       ensureClosed(response.body());
       return null;

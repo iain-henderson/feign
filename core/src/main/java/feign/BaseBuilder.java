@@ -42,6 +42,7 @@ public abstract class BaseBuilder<B extends BaseBuilder<B>> {
   protected Logger logger = new NoOpLogger();
   protected Encoder encoder = new Encoder.Default();
   protected Decoder decoder = new Decoder.Default();
+  protected Decoder redirectionDecoder = null;
   protected boolean closeAfterDecode = true;
   protected QueryMapEncoder queryMapEncoder = new FieldQueryMapEncoder();
   protected ErrorDecoder errorDecoder = new ErrorDecoder.Default();
@@ -85,6 +86,11 @@ public abstract class BaseBuilder<B extends BaseBuilder<B>> {
 
   public B decoder(Decoder decoder) {
     this.decoder = decoder;
+    return thisB;
+  }
+
+  public B redirectionDecoder(Decoder redirectionDecoder) {
+    this.redirectionDecoder = redirectionDecoder;
     return thisB;
   }
 

@@ -590,6 +590,28 @@ public class Example {
 }
 ```
 
+For the (common) edge case where a client wants to return the Location header from a Redirection response you can 
+configure your HTTP client to NOT follow redirects and configure a redirection decoder.
+
+```java
+interface Redirects {
+  @GET @Path("/redirected/url")
+  String location();
+
+  @GET @Path("/redirected/url")
+  List<String> locations();
+}
+
+public class Example {
+  public static void main(String[] args) {
+    Redirects redirects = Feign.builder()
+                     .options(new Options(10, TimeUnit.SECONDS, 60, TimeUnit.SECONDS, false))
+                     .redirectionDecoder(new RedirectionDecoder())
+                     .target(Redirects.class, "https://example.com");
+  }
+}
+```
+
 If any methods in your interface return type `Stream`, you'll need to configure a `StreamDecoder`.
 
 Here's how to configure Stream decoder without delegate decoder:

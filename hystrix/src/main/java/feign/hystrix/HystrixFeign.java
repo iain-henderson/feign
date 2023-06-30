@@ -203,6 +203,11 @@ public final class HystrixFeign {
     }
 
     @Override
+    public Builder redirectionDecoder(Decoder redirectionDecoder) {
+      return (Builder) super.redirectionDecoder(redirectionDecoder);
+    }
+
+    @Override
     public Builder options(Request.Options options) {
       return (Builder) super.options(options);
     }

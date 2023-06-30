@@ -30,9 +30,15 @@ class AsyncResponseHandler {
   AsyncResponseHandler(Level logLevel, Logger logger, Decoder decoder,
       ErrorDecoder errorDecoder, boolean dismiss404, boolean closeAfterDecode,
       ResponseInterceptor responseInterceptor) {
+    this(logLevel, logger, decoder, errorDecoder, null, dismiss404, closeAfterDecode, responseInterceptor);
+  }
+
+  AsyncResponseHandler(Level logLevel, Logger logger, Decoder decoder,
+      ErrorDecoder errorDecoder, Decoder redirectionDecoder, boolean dismiss404, boolean closeAfterDecode,
+      ResponseInterceptor responseInterceptor) {
     this.responseHandler = new ResponseHandler(
         logLevel, logger, decoder,
-        errorDecoder, dismiss404, closeAfterDecode,
+        errorDecoder, redirectionDecoder, dismiss404, closeAfterDecode,
         responseInterceptor);
   }
 

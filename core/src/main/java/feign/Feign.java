@@ -154,6 +154,11 @@ public abstract class Feign {
     }
 
     @Override
+    public Builder redirectionDecoder(Decoder redirectionDecoder) {
+      return super.redirectionDecoder(redirectionDecoder);
+    }
+
+    @Override
     public Builder options(Options options) {
       return super.options(options);
     }
